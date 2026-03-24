@@ -19,8 +19,6 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructArrayPublisher;
-import edu.wpi.first.wpilibj.ADIS16470_IMU;
-import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
 import frc.robot.Constants.DriveConstants;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -30,25 +28,25 @@ public class DriveSubsystem extends SubsystemBase {
       DriveConstants.kFrontLeftDrivingCanId,
       DriveConstants.kFrontLeftTurningCanId,
       DriveConstants.kFrontLeftCANCoderId,
-      DriveConstants.kFrontLeftChassisAngularOffset);
+      DriveConstants.kFrontLeftCANCoderOffset);
 
   private final MAXSwerveModule m_frontRight = new MAXSwerveModule(
       DriveConstants.kFrontRightDrivingCanId,
       DriveConstants.kFrontRightTurningCanId,
       DriveConstants.kFrontRightCANCoderId,
-      DriveConstants.kFrontRightChassisAngularOffset);
+      DriveConstants.kFrontRightCANCoderOffset);
 
   private final MAXSwerveModule m_rearLeft = new MAXSwerveModule(
       DriveConstants.kRearLeftDrivingCanId,
       DriveConstants.kRearLeftTurningCanId,
       DriveConstants.kBackLeftCANCoderId,
-      DriveConstants.kBackLeftChassisAngularOffset);
+      DriveConstants.kBackLeftCANCoderOffset);
 
   private final MAXSwerveModule m_rearRight = new MAXSwerveModule(
       DriveConstants.kRearRightDrivingCanId,
       DriveConstants.kRearRightTurningCanId,
       DriveConstants.kBackRightCANCoderId,
-      DriveConstants.kBackRightChassisAngularOffset);
+      DriveConstants.kBackRightCANCoderOffset);
 
   // The gyro sensor
   private final Pigeon2 m_gyro = new Pigeon2(DriveConstants.kGyroCanId);

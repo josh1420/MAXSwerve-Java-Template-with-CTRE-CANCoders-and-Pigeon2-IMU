@@ -7,17 +7,14 @@ package frc.robot.subsystems;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 import com.ctre.phoenix6.hardware.CANcoder;
-import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.PersistMode;
 import com.revrobotics.ResetMode;
@@ -63,7 +60,7 @@ public class MAXSwerveModule extends SubsystemBase {
     m_turningEncoder.getConfigurator().apply(new MagnetSensorConfigs().withAbsoluteSensorDiscontinuityPoint(1));
 
     m_CANCoderOffset = CANCoderOffset;
-    m_desiredState.angle = new Rotation2d((m_turningEncoder.getAbsolutePosition().getValueAsDouble() - m_CANCoderOffset)*(2 * Math.PI));
+    m_desiredState.angle = new Rotation2d(getCANCoderAngle());
     m_drivingEncoder.setPosition(0);
   }
 
@@ -76,7 +73,7 @@ public class MAXSwerveModule extends SubsystemBase {
     // Apply chassis angular offset to the encoder position to get the position
     // relative to the chassis.
     return new SwerveModuleState(m_drivingEncoder.getVelocity(),
-        new Rotation2d((m_turningEncoder.getAbsolutePosition().getValueAsDouble() - m_CANCoderOffset)*(2 * Math.PI)));
+        new Rotation2d(getCANCoderAngle()));
   }
 
   /**
@@ -89,7 +86,7 @@ public class MAXSwerveModule extends SubsystemBase {
     // relative to the chassis.
     return new SwerveModulePosition(
         m_drivingEncoder.getPosition(),
-        new Rotation2d(((m_turningEncoder.getAbsolutePosition().getValueAsDouble() - m_CANCoderOffset)*(2 * Math.PI))));
+        new Rotation2d(getCANCoderAngle()));
   }
 
   /**
@@ -101,10 +98,10 @@ public class MAXSwerveModule extends SubsystemBase {
     // Apply chassis angular offset to the desired state.
     SwerveModuleState correctedDesiredState = new SwerveModuleState();
     correctedDesiredState.speedMetersPerSecond = desiredState.speedMetersPerSecond;
-    correctedDesiredState.angle = desiredState.angle.plus(Rotation2d.fromRotations(m_CANCoderOffset));
+    correctedDesiredState.angle = desiredState.angle;
 
     // Optimize the reference state to avoid spinning further than 90 degrees.
-    correctedDesiredState.optimize(new Rotation2d(((m_turningEncoder.getAbsolutePosition().getValueAsDouble() - m_CANCoderOffset)*(2 * Math.PI))));
+    correctedDesiredState.optimize(new Rotation2d(getCANCoderAngle()));
 
     // Command driving and turning SPARKS towards their respective setpoints.
     m_drivingClosedLoopController.setSetpoint(correctedDesiredState.speedMetersPerSecond, ControlType.kVelocity);
@@ -119,12 +116,11 @@ public class MAXSwerveModule extends SubsystemBase {
   }
   @Override
   public void periodic(){
-      double cancoderRadians =
-      m_turningEncoder.getAbsolutePosition().getValueAsDouble()- m_CANCoderOffset; // your calibrated offset
-      cancoderRadians *= 2 * Math.PI; //CANCoders return values from 0 to 1, so multiply by 2 * pi to get radians
+  m_turningSpark.getAlternateEncoder().setPosition(getCANCoderAngle()); //sets the "encoder" position to the value of the cancoder, so the PID Controller will work
+  }
 
- // cancoderRadians -= m_CANCoderOffset; // your calibrated offset
-
-  m_turningSpark.getAlternateEncoder().setPosition(cancoderRadians); //sets the "encoder" position to the value of the cancoder, so the PID Controller will work
+  private double getCANCoderAngle() {
+    return (m_turningEncoder.getAbsolutePosition().getValueAsDouble() - m_CANCoderOffset) * (2 * Math.PI);
+    //CANCoders return a value between 0 and 1 representing the position of the encoder, so we multiply by 2 * pi to get the angle in radians
   }
 }
