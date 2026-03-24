@@ -116,7 +116,7 @@ public class MAXSwerveModule extends SubsystemBase {
   }
   @Override
   public void periodic(){
-  m_turningSpark.getAlternateEncoder().setPosition(getCANCoderAngle()); //sets the "encoder" position to the value of the cancoder, so the PID Controller will work
+  m_turningSpark.getAlternateEncoder().setPosition(getCANCoderAngle()); //sets the SPARK MAX Alternate Encoder value to the CANCoder angle, this allows us to use the SPARK MAX's closed loop control to control the angle of the module, while still using the CANCoder for absolute position feedback.
   }
 
   private double getCANCoderAngle() {
