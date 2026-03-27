@@ -88,6 +88,20 @@ private final StructArrayPublisher<SwerveModuleState> desiredStatesPublisher =
             m_rearLeft.getPosition(),
             m_rearRight.getPosition()
         });
+
+        actualStatesPublisher.set(new SwerveModuleState[] {
+      m_frontLeft.getState(),
+      m_frontRight.getState(),
+      m_rearLeft.getState(),
+      m_rearRight.getState()
+  });
+
+  desiredStatesPublisher.set(new SwerveModuleState[] {
+      m_frontLeft.m_desiredState,
+      m_frontRight.m_desiredState,
+      m_rearLeft.m_desiredState,
+      m_rearRight.m_desiredState
+  });
   }
 
   /**
@@ -204,19 +218,36 @@ private final StructArrayPublisher<SwerveModuleState> desiredStatesPublisher =
 @Override
   public void simulationPeriodic() {
     // This method will be called once per scheduler run during simulation
-   actualStatesPublisher.set(new SwerveModuleState[] {
-      m_frontLeft.getState(),
-      m_frontRight.getState(),
-      m_rearLeft.getState(),
-      m_rearRight.getState()
-  });
-
-  desiredStatesPublisher.set(new SwerveModuleState[] {
-      m_frontLeft.m_desiredState,
-      m_frontRight.m_desiredState,
-      m_rearLeft.m_desiredState,
-      m_rearRight.m_desiredState
-  });
+   
   }
 
-}
+ public void resetModules(){
+  m_frontLeft.zeroModuleAngle();
+  m_frontRight.zeroModuleAngle();
+  m_rearLeft.zeroModuleAngle();
+  m_rearRight.zeroModuleAngle();
+ } //resets all module positions to 0, makes all the wheels point forward
+
+
+ public void pointModulesAt(Rotation2d angle){
+  m_frontLeft.pointModuleAt(angle);
+  m_frontRight.pointModuleAt(angle);
+  m_rearLeft.pointModuleAt(angle);
+  m_rearRight.pointModuleAt(angle);
+ } //points all modules at a specified angle, useful for testing and for setting the modules into a known configuration
+
+ public void resetSwerve(){
+    // Use the robot’s current heading as the new "zero" for field-relative driving
+    Rotation2d currentHeading = Rotation2d.fromDegrees(m_gyro.getYaw().getValueAsDouble());
+    
+    m_odometry.resetPosition(
+        currentHeading, // sets the robot's current orientation as the reference
+        new SwerveModulePosition[] {
+            m_frontLeft.getPosition(),
+            m_frontRight.getPosition(),
+            m_rearLeft.getPosition(),
+            m_rearRight.getPosition()
+        },
+        m_odometry.getPoseMeters() // keeps current x/y, just resets the heading
+    );
+}}

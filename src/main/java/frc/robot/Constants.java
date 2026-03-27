@@ -39,7 +39,7 @@ public final class Constants {
         new Translation2d(-kWheelBase / 2, kTrackWidth / 2),
         new Translation2d(-kWheelBase / 2, -kTrackWidth / 2));
 
-    // Angular offsets of the modules relative to the chassis in radians
+    // CANCoder offsets of each module in rotations, make sure the bevel gears are all pointed to the right side of the robot
     public static final double kFrontLeftCANCoderOffset = 0;
     public static final double kFrontRightCANCoderOffset = 0;
     public static final double kBackLeftCANCoderOffset = 0;

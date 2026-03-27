@@ -123,4 +123,11 @@ public class MAXSwerveModule extends SubsystemBase {
     return (m_turningEncoder.getAbsolutePosition().getValueAsDouble() - m_CANCoderOffset) * (2 * Math.PI);
     //CANCoders return a value between 0 and 1 representing the position of the encoder, so we multiply by 2 * pi to get the angle in radians
   }
+  public void zeroModuleAngle(){
+    m_turningClosedLoopController.setSetpoint(0, ControlType.kPosition);
+  }
+  //Resets the module angle to 0, prefibly used in the initialization
+  public void pointModuleAt(Rotation2d angle){
+    m_turningClosedLoopController.setSetpoint(angle.getRadians(), ControlType.kPosition);
+  }
 }
