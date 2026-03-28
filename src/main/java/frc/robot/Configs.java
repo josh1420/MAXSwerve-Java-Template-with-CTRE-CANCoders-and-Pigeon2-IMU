@@ -29,18 +29,18 @@ public final class Configs {
             drivingConfig.closedLoop
                     .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
                     // These are example gains you may need to them for your own robot!
-                    .pid(0.04, 0, 0)
+                    .pid(0.01, 0, 0)
                     .outputRange(-1, 1)
                     .feedForward.kV(drivingVelocityFeedForward);
 
             turningConfig
-                    .idleMode(IdleMode.kBrake)
+                    .idleMode(IdleMode.kCoast)
                     .smartCurrentLimit(20);
 
-            turningConfig.alternateEncoder.apply(new AlternateEncoderConfig().setSparkMaxDataPortConfig())
+            turningConfig.alternateEncoder.apply(new AlternateEncoderConfig().setSparkMaxDataPortConfig().positionConversionFactor(turningFactor))
 ;
             turningConfig.closedLoop
-                    .feedbackSensor(FeedbackSensor.kDetachedRelativeEncoder)
+                    .feedbackSensor(FeedbackSensor.kDetachedAbsoluteEncoder)
                     // These are example gains you may need to them for your own robot!
                     .pid(1, 0, 0)
                     .outputRange(-1, 1)

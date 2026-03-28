@@ -19,6 +19,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructArrayPublisher;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.DriveConstants;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -102,6 +103,9 @@ private final StructArrayPublisher<SwerveModuleState> desiredStatesPublisher =
       m_rearLeft.m_desiredState,
       m_rearRight.m_desiredState
   });
+      SmartDashboard.putNumber("requestedPOs", m_frontRight.m_desiredState.angle.getRadians());
+      SmartDashboard.putNumber("actualPOS", m_frontRight.getPosition().angle.getRadians());
+
   }
 
   /**
