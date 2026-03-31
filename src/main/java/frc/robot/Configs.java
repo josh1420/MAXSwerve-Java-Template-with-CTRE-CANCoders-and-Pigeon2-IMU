@@ -33,9 +33,10 @@ public final class Configs {
                     .outputRange(-1, 1)
                     .feedForward.kV(drivingVelocityFeedForward);
 
-            turningConfig
-                    .idleMode(IdleMode.kCoast)
+            turningConfig.inverted(true)
+                    .idleMode(IdleMode.kBrake)
                     .smartCurrentLimit(20);
+                    
 
             turningConfig.alternateEncoder.apply(new AlternateEncoderConfig().setSparkMaxDataPortConfig().positionConversionFactor(turningFactor))
 ;

@@ -32,9 +32,9 @@ public class MAXSwerveModule extends SubsystemBase {
   private final SparkClosedLoopController m_drivingClosedLoopController;
 
   // ✅ WPILib PID (replaces Spark turning PID)
-  private final PIDController m_turningPID = new PIDController(1, 0.0, 0.0);
+  private final PIDController m_turningPID = new PIDController(1,0,0.0);
 
-  private double m_CANCoderOffset = 0;
+  private double m_CANCoderOffset;
 
   public SwerveModuleState m_desiredState =
       new SwerveModuleState(0.0, new Rotation2d());
@@ -76,6 +76,8 @@ public class MAXSwerveModule extends SubsystemBase {
 
     // ✅ Enable continuous input (CRITICAL)
     m_turningPID.enableContinuousInput(0, 2 * Math.PI);
+   m_turningPID.reset();
+   SmartDashboard.putData("PID turnin", m_turningPID);
 
     // Optional tolerance
    
@@ -117,8 +119,8 @@ public class MAXSwerveModule extends SubsystemBase {
     // Turning control (NEW)
     double currentAngle = getCANCoderAngle();
     double targetAngle = correctedDesiredState.angle.getRadians();
-
-    double output = m_turningPID.calculate(currentAngle, targetAngle);
+    
+    double output = m_turningPID.calculate(getCANCoderAngle(), correctedDesiredState.angle.getRadians());
 
    
 

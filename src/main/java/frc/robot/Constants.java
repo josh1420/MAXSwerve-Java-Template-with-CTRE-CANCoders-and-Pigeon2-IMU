@@ -40,10 +40,10 @@ public final class Constants {
         new Translation2d(-kWheelBase / 2, -kTrackWidth / 2));
 
     // CANCoder offsets of each module in rotations, make sure the bevel gears are all pointed to the right side of the robot
-    public static final double kFrontLeftCANCoderOffset = -0.52246;
-    public static final double kFrontRightCANCoderOffset = 0.188232;
-    public static final double kBackLeftCANCoderOffset = 0.742432;
-    public static final double kBackRightCANCoderOffset = 0.370361;
+    public static final double kFrontLeftCANCoderOffset = 0.959473;
+    public static final double kFrontRightCANCoderOffset = 0.190918;
+    public static final double kBackLeftCANCoderOffset = 0.743652;
+    public static final double kBackRightCANCoderOffset = 0.375488;
 
     // SPARK MAX CAN IDs
     public static final int kFrontLeftDrivingCanId = 18;

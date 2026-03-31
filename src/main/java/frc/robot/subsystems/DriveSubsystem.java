@@ -242,16 +242,13 @@ private final StructArrayPublisher<SwerveModuleState> desiredStatesPublisher =
 
  public void resetSwerve(){
     // Use the robot’s current heading as the new "zero" for field-relative driving
-    Rotation2d currentHeading = Rotation2d.fromDegrees(m_gyro.getYaw().getValueAsDouble());
+    Pose2d cureentPose = m_odometry.getPoseMeters();
+    Pose2d restPose = new Pose2d(cureentPose.getTranslation(), new Rotation2d());
     
-    m_odometry.resetPosition(
-        currentHeading, // sets the robot's current orientation as the reference
-        new SwerveModulePosition[] {
-            m_frontLeft.getPosition(),
-            m_frontRight.getPosition(),
-            m_rearLeft.getPosition(),
-            m_rearRight.getPosition()
-        },
-        m_odometry.getPoseMeters() // keeps current x/y, just resets the heading
-    );
-}}
+    m_odometry.resetPosition(m_gyro.getRotation2d(), getModulePositions(), restPose);
+    
+}
+public SwerveModulePosition[] getModulePositions(){
+  return new SwerveModulePosition[]{ m_frontLeft.getPosition(), m_frontRight.getPosition(), m_rearLeft.getPosition(), m_rearRight.getPosition()};
+}
+}
