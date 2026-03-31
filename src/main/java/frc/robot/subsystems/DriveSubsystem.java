@@ -51,6 +51,7 @@ public class DriveSubsystem extends SubsystemBase {
 
   // The gyro sensor
   private final Pigeon2 m_gyro = new Pigeon2(DriveConstants.kGyroCanId);
+  private  Rotation2d m_fieldRelativeOffset = new Rotation2d(); // Offset for field-relative driving
 
   // Odometry class for tracking robot pose
   SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(
@@ -152,7 +153,7 @@ private final StructArrayPublisher<SwerveModuleState> desiredStatesPublisher =
     var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(
         fieldRelative
             ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered,
-                Rotation2d.fromDegrees(m_gyro.getYaw().getValueAsDouble()))
+                Rotation2d.fromDegrees(m_gyro.getYaw().getValueAsDouble()).minus(m_fieldRelativeOffset))
             : new ChassisSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered));
     SwerveDriveKinematics.desaturateWheelSpeeds(
         swerveModuleStates, DriveConstants.kMaxSpeedMetersPerSecond);
@@ -242,10 +243,8 @@ private final StructArrayPublisher<SwerveModuleState> desiredStatesPublisher =
 
  public void resetSwerve(){
     // Use the robot’s current heading as the new "zero" for field-relative driving
-    Pose2d cureentPose = m_odometry.getPoseMeters();
-    Pose2d restPose = new Pose2d(cureentPose.getTranslation(), new Rotation2d());
-    
-    m_odometry.resetPosition(m_gyro.getRotation2d(), getModulePositions(), restPose);
+   m_fieldRelativeOffset = Rotation2d.fromDegrees(m_gyro.getYaw().getValueAsDouble());
+
     
 }
 public SwerveModulePosition[] getModulePositions(){

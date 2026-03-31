@@ -73,7 +73,7 @@ public class RobotContainer {
   private void configureButtonBindings() {
     m_driverController.x().whileTrue(Commands.run(() -> m_robotDrive.setX(), m_robotDrive)); //points all modules at 45 degrees while the X button is held, useful for testing and for setting the modules into a known configuration
 
-   m_driverController.start().onTrue(Commands.runOnce(()->m_robotDrive.zeroHeading())); //resets the robot's heading to 0 when the start button is pressed, useful for testing and for resetting the gyro during a match
+   m_driverController.start().onTrue(Commands.runOnce(()->m_robotDrive.resetSwerve())); //resets the robot's heading to 0 when the start button is pressed, useful for testing and for resetting the gyro during a match
   m_driverController.y().onTrue(Commands.runOnce(()->m_robotDrive.pointModulesAt(Rotation2d.fromDegrees(0))));
   }
 
