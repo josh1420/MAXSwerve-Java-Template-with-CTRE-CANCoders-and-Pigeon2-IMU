@@ -71,10 +71,9 @@ public class RobotContainer {
    * {@link JoystickButton}.
    */
   private void configureButtonBindings() {
-    m_driverController.x().whileTrue(Commands.run(() -> m_robotDrive.setX(), m_robotDrive)); //points all modules at 45 degrees while the X button is held, useful for testing and for setting the modules into a known configuration
-
-   m_driverController.start().onTrue(Commands.runOnce(()->m_robotDrive.resetSwerve())); //resets the robot's heading to 0 when the start button is pressed, useful for testing and for resetting the gyro during a match
-  m_driverController.y().onTrue(Commands.runOnce(()->m_robotDrive.pointModulesAt(Rotation2d.fromDegrees(0))));
+    m_driverController.x().whileTrue(Commands.run(() -> m_robotDrive.setX(), m_robotDrive)); //points all modules at 45 degrees while the X button is held, useful for defensive driving, makes the robot a brick wall
+   m_driverController.start().onTrue(Commands.runOnce(()->m_robotDrive.resetSwerve())); //resets the robot's odometry when the robot's swerve drive is inverted or off, make sure your robot is facing the front when you do this
+  m_driverController.y().onTrue(Commands.runOnce(()->m_robotDrive.pointModulesAt(Rotation2d.fromDegrees(0)))); //this resets the swerve module positions to 0, pointing them all to the front
   }
 
   /**

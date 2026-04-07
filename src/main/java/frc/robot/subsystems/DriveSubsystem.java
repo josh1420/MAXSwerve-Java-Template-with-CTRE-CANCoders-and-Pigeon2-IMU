@@ -51,6 +51,7 @@ public class DriveSubsystem extends SubsystemBase {
 
   // The gyro sensor
   private final Pigeon2 m_gyro = new Pigeon2(DriveConstants.kGyroCanId);
+
   private  Rotation2d m_fieldRelativeOffset = new Rotation2d(); // Offset for field-relative driving
 
   // Odometry class for tracking robot pose
@@ -67,11 +68,15 @@ private final StructArrayPublisher<SwerveModuleState> actualStatesPublisher =
     NetworkTableInstance.getDefault()
         .getStructArrayTopic("Swerve/ActualStates", SwerveModuleState.struct)
         .publish();
+        //publishes the actual states of each swerve module to NetworkTables, useful for debugging and for visualizing the robot's movement in tools like Shuffleboard or PathWeaver
 
 private final StructArrayPublisher<SwerveModuleState> desiredStatesPublisher = 
     NetworkTableInstance.getDefault()
         .getStructArrayTopic("Swerve/DesiredStates", SwerveModuleState.struct)
         .publish();
+//publishes the desired states of each swerve module to NetworkTables, useful for debugging and for visualizing the robot's movement in tools like Shuffleboard or PathWeaver
+
+
   /** Creates a new DriveSubsystem. */
   public DriveSubsystem() {
     // Usage reporting for MAXSwerve template
@@ -104,15 +109,14 @@ private final StructArrayPublisher<SwerveModuleState> desiredStatesPublisher =
       m_rearLeft.m_desiredState,
       m_rearRight.m_desiredState
   });
-      SmartDashboard.putNumber("requestedPOs", m_frontRight.m_desiredState.angle.getRadians());
-      SmartDashboard.putNumber("actualPOS", m_frontRight.getPosition().angle.getRadians());
+      
 
   }
 
   /**
    * Returns the currently-estimated pose of the robot.
    *
-   * @return The pose.
+   * @return The current odometry pose.
    */
   public Pose2d getPose() {
     return m_odometry.getPoseMeters();
@@ -153,11 +157,16 @@ private final StructArrayPublisher<SwerveModuleState> desiredStatesPublisher =
     var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(
         fieldRelative
             ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered,
-                Rotation2d.fromDegrees(m_gyro.getYaw().getValueAsDouble()).minus(m_fieldRelativeOffset))
+                Rotation2d.fromDegrees(m_gyro.getYaw().getValueAsDouble()).minus(m_fieldRelativeOffset))//<- applies the field-relative offset to the gyro reading
             : new ChassisSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered));
+            //the math that caluclates the module positions and speeds depending on the input values
+
+
     SwerveDriveKinematics.desaturateWheelSpeeds(
         swerveModuleStates, DriveConstants.kMaxSpeedMetersPerSecond);
-    m_frontLeft.setDesiredState(swerveModuleStates[0]);
+
+//from the calculations, sets each module to the desired speeds and angles
+    m_frontLeft.setDesiredState(swerveModuleStates[0]); 
     m_frontRight.setDesiredState(swerveModuleStates[1]);
     m_rearLeft.setDesiredState(swerveModuleStates[2]);
     m_rearRight.setDesiredState(swerveModuleStates[3]);
@@ -220,33 +229,32 @@ private final StructArrayPublisher<SwerveModuleState> desiredStatesPublisher =
  
   }
 
-@Override
-  public void simulationPeriodic() {
-    // This method will be called once per scheduler run during simulation
-   
-  }
 
+//resets all module positions to 0, makes all the wheels point forward
  public void resetModules(){
   m_frontLeft.zeroModuleAngle();
   m_frontRight.zeroModuleAngle();
   m_rearLeft.zeroModuleAngle();
   m_rearRight.zeroModuleAngle();
- } //resets all module positions to 0, makes all the wheels point forward
+ } 
 
-
+//points all modules at a specified angle, useful for testing and for setting the modules into a known configuration
  public void pointModulesAt(Rotation2d angle){
   m_frontLeft.pointModuleAt(angle);
   m_frontRight.pointModuleAt(angle);
   m_rearLeft.pointModuleAt(angle);
   m_rearRight.pointModuleAt(angle);
- } //points all modules at a specified angle, useful for testing and for setting the modules into a known configuration
+ } 
 
+
+ // Use the robot’s current heading as the new "zero" for field-relative driving
  public void resetSwerve(){
-    // Use the robot’s current heading as the new "zero" for field-relative driving
+    
    m_fieldRelativeOffset = Rotation2d.fromDegrees(m_gyro.getYaw().getValueAsDouble());
 
     
 }
+//gets the positions of each module
 public SwerveModulePosition[] getModulePositions(){
   return new SwerveModulePosition[]{ m_frontLeft.getPosition(), m_frontRight.getPosition(), m_rearLeft.getPosition(), m_rearRight.getPosition()};
 }
