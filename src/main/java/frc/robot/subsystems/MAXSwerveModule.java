@@ -33,7 +33,7 @@ public class MAXSwerveModule extends SubsystemBase {
 
   /** PID controller for rotating the swerve module wheel to the desired angle.
    *  I recommend starting with these values as a value greater than 1 will cause the modules to recoil to position */
-  private final PIDController m_turningPID = new PIDController(1,0,0.0);
+  private final PIDController m_turningPID = new PIDController(0.5,0,0.0);
 
   /** The offset (in rotations) applied to the CANCoder reading to align the zero position of the wheel. */
   private double m_CANCoderOffset;
@@ -125,7 +125,11 @@ public class MAXSwerveModule extends SubsystemBase {
 
     double output = m_turningPID.calculate(getCANCoderAngle(), desiredState.angle.getRadians());
     //tells the module where to point the wheel
+    //output*=0.5;
     m_turningSpark.set(output);
+    if (m_turningPID.atSetpoint()){
+      output=0;
+    }
 
     m_desiredState = desiredState;
   }
