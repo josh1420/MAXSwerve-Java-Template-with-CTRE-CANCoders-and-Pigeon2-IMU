@@ -4,12 +4,8 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.hal.FRCNetComm.tInstances;
-import edu.wpi.first.hal.FRCNetComm.tResourceType;
-
 import com.ctre.phoenix6.hardware.Pigeon2;
 
-import edu.wpi.first.hal.HAL;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -19,7 +15,6 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructArrayPublisher;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.DriveConstants;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -68,13 +63,12 @@ private final StructArrayPublisher<SwerveModuleState> actualStatesPublisher =
     NetworkTableInstance.getDefault()
         .getStructArrayTopic("Swerve/ActualStates", SwerveModuleState.struct)
         .publish();
-        //publishes the actual states of each swerve module to NetworkTables, useful for debugging and for visualizing the robot's movement in tools like Shuffleboard or PathWeaver
-
+        //publishes the actual states of each swerve module to NetworkTables, primarily for telemetry debugging
 private final StructArrayPublisher<SwerveModuleState> desiredStatesPublisher = 
     NetworkTableInstance.getDefault()
         .getStructArrayTopic("Swerve/DesiredStates", SwerveModuleState.struct)
         .publish();
-//publishes the desired states of each swerve module to NetworkTables, useful for debugging and for visualizing the robot's movement in tools like Shuffleboard or PathWeaver
+//publishes what the swerve module states should be like on the network tables, primarily for telemetry debugging
 
 
   /** Creates a new DriveSubsystem. */
@@ -86,7 +80,7 @@ private final StructArrayPublisher<SwerveModuleState> desiredStatesPublisher =
 
   @Override
   public void periodic() {
-    // Update the odometry in the periodic block
+    // Update the odometry 
     m_odometry.update(
         Rotation2d.fromDegrees(m_gyro.getYaw().getValueAsDouble()),
         new SwerveModulePosition[] {
