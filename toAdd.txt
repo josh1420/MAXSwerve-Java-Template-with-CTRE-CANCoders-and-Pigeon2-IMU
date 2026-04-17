@@ -1,0 +1,4 @@
+add an image of Phoenix tuner x with the signal tab hightlighted
+add an image of adding the cancoders to the signals
+ad an aimage of showing how to read the absolute position and add text that says this value is your CANCoder Offset
+add a swerve diagram that shows all wheels should be facing dead north, no matter what the angle is, as long as its pointed toward the front
